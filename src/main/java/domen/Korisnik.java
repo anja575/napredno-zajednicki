@@ -3,6 +3,7 @@ package domen;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * 
@@ -44,6 +45,7 @@ public class Korisnik extends OpstiDomenskiObjekat{
 
 	/**
 	 * Parametrizovani konstrukor koji kreira novog clana i prosledjuje mu zadate vrednosti.
+	 * 
 	 * @param korisnikID  ID korisnika tipa Long.
 	 * @param ime		  Ime korisnika tipa String.
 	 * @param prezime	  Prezime korisnika tipa String.
@@ -57,21 +59,35 @@ public class Korisnik extends OpstiDomenskiObjekat{
 		setUsername(username);
 		setPassword(password);
 	}
-
+	/**
+     * Vraca ID korisnika..
+     * 
+     * @return ID korisnika kao Long.
+     */
 	public long getKorisnikID() {
 		return korisnikID;
 	}
-
+	/**
+	    * Postavlja ID korisnika.
+	    * 
+	    * @param korisnikID kao ID korisnika.
+	    */
 	public void setKorisnikID(long korisnikID) {
 		this.korisnikID = korisnikID;
 	}
-
+	/**
+     * Vraca ime korisnika..
+     * 
+     * @return ime korisnika kao String.
+     */
 	public String getIme() {
 		return ime;
 	}
 
 	public void setIme(String ime) {
-		this.ime = ime;
+		if(ime==null) throw new NullPointerException();
+    	if(ime.length()<3 || ime.equals("")) throw new IllegalArgumentException();
+        this.ime = ime;
 	}
 
 	public String getPrezime() {
@@ -79,7 +95,9 @@ public class Korisnik extends OpstiDomenskiObjekat{
 	}
 
 	public void setPrezime(String prezime) {
-		this.prezime = prezime;
+		if(prezime==null) throw new NullPointerException();
+    	if(prezime.length()<3 || prezime.equals("")) throw new IllegalArgumentException();
+        this.prezime = prezime;
 	}
 
 	public String getUsername() {
@@ -87,7 +105,9 @@ public class Korisnik extends OpstiDomenskiObjekat{
 	}
 
 	public void setUsername(String username) {
-		this.username = username;
+		if(username==null) throw new NullPointerException();
+        if(username.length()<4 || username.equals("")) throw new IllegalArgumentException();
+        this.username = username;
 	}
 
 	public String getPassword() {
@@ -95,7 +115,9 @@ public class Korisnik extends OpstiDomenskiObjekat{
 	}
 
 	public void setPassword(String password) {
-		this.password = password;
+		if(password==null) throw new NullPointerException();
+        if(password.length()<8 || password.equals("")) throw new IllegalArgumentException();
+        this.password = password;
 	}
 
 	@Override
@@ -118,8 +140,8 @@ public class Korisnik extends OpstiDomenskiObjekat{
 		ArrayList<OpstiDomenskiObjekat> lista = new ArrayList<>();
 
 		while (rs.next()) {
-			Korisnik k = new Korisnik(rs.getLong("KorisnikID"), rs.getString("Ime"),
-					rs.getString("Prezime"), rs.getString("Username"), rs.getString("Password"));
+			Korisnik k = new Korisnik(rs.getLong("KorisnikID"), rs.getString("ImeKorisnika"),
+					rs.getString("PrezimeKorisnika"), rs.getString("Username"), rs.getString("Password"));
 
 			lista.add(k);
 		}
@@ -130,7 +152,7 @@ public class Korisnik extends OpstiDomenskiObjekat{
 
 	@Override
 	public String koloneZaInsert() {
-		return " (Ime, Prezime, Username, Password) ";
+		return " (ImeKorisnika, PrezimeKorisnika, Username, Password) ";
 	}
 
 	@Override
@@ -145,7 +167,7 @@ public class Korisnik extends OpstiDomenskiObjekat{
 
 	@Override
 	public String vrednostiZaUpdate() {
-		return " Ime = '" + ime + "', Prezime = '" + prezime + "', " + "Username = '" + username + "', Password = '"
+		return " ImeKorisnika = '" + ime + "', PrezimeKorisnika = '" + prezime + "', " + "Username = '" + username + "', Password = '"
 				+ password + "' ";
 	}
 
@@ -157,10 +179,7 @@ public class Korisnik extends OpstiDomenskiObjekat{
 	@Override
 	public String toString() {
 		return ime + " " + prezime;
-	}
-	
-	
-	
+	}	
 	
 	
 }

@@ -30,7 +30,8 @@ public class Smer extends OpstiDomenskiObjekat {
 	}
 
 	public void setNaziv(String naziv) {
-		this.naziv = naziv;
+		if(naziv==null) throw new NullPointerException();
+        this.naziv = naziv;
 	}
 
 	@Override
@@ -53,7 +54,7 @@ public class Smer extends OpstiDomenskiObjekat {
 		ArrayList<OpstiDomenskiObjekat> lista = new ArrayList<>();
 
 		while (rs.next()) {
-			Smer s = new Smer(rs.getLong("SmerID"), rs.getString("Naziv"));
+			Smer s = new Smer(rs.getLong("SmerID"), rs.getString("NazivSmera"));
 
 			lista.add(s);
 		}
@@ -64,7 +65,7 @@ public class Smer extends OpstiDomenskiObjekat {
 
 	@Override
 	public String koloneZaInsert() {
-		return " (Naziv) ";
+		return " (NazivSmera) ";
 	}
 
 	@Override
@@ -79,7 +80,7 @@ public class Smer extends OpstiDomenskiObjekat {
 
 	@Override
 	public String vrednostiZaUpdate() {
-		return " Naziv = '" + naziv + "' ";
+		return " NazivSmera = '" + naziv + "' ";
 	}
 
 	@Override

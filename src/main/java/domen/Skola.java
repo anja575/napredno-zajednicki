@@ -32,7 +32,8 @@ public class Skola extends OpstiDomenskiObjekat {
 	}
 
 	public void setNaziv(String naziv) {
-		this.naziv = naziv;
+		if(naziv==null) throw new NullPointerException();
+        this.naziv = naziv;
 	}
 
 	public String getAdresa() {
@@ -40,7 +41,8 @@ public class Skola extends OpstiDomenskiObjekat {
 	}
 
 	public void setAdresa(String adresa) {
-		this.adresa = adresa;
+		if(adresa==null) throw new NullPointerException();
+        this.adresa = adresa;
 	}
 
 	@Override
@@ -63,7 +65,7 @@ public class Skola extends OpstiDomenskiObjekat {
 		ArrayList<OpstiDomenskiObjekat> lista = new ArrayList<>();
 
 		while (rs.next()) {
-			Skola s = new Skola(rs.getLong("SkolaID"), rs.getString("Naziv"),
+			Skola s = new Skola(rs.getLong("SkolaID"), rs.getString("NazivSkole"),
 					rs.getString("Adresa"));
 
 			lista.add(s);
@@ -75,7 +77,7 @@ public class Skola extends OpstiDomenskiObjekat {
 
 	@Override
 	public String koloneZaInsert() {
-		return " (Naziv, Adresa) ";
+		return " (NazivSkole, Adresa) ";
 	}
 
 	@Override
@@ -90,7 +92,7 @@ public class Skola extends OpstiDomenskiObjekat {
 
 	@Override
 	public String vrednostiZaUpdate() {
-		return " Naziv = '" + naziv + "', Adresa = '" + adresa + "' ";
+		return " NazivSkole = '" + naziv + "', Adresa = '" + adresa + "' ";
 	}
 
 	@Override

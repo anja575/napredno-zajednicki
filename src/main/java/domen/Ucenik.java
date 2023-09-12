@@ -2,15 +2,13 @@ package domen;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 
-
 public class Ucenik extends OpstiDomenskiObjekat {
 
-	private long ucenikID;
 	private Odeljenje odeljenje;
+	private long ucenikID;
 	private String ime;
 	private String prezime;
 	private Date datumRodjenja;
@@ -22,7 +20,7 @@ public class Ucenik extends OpstiDomenskiObjekat {
 	public Ucenik() {
 	}
 
-	public Ucenik(long ucenikID, Odeljenje odeljenje, String ime, String prezime, Date datumRodjenja, String ulica,
+	public Ucenik(Odeljenje odeljenje, long ucenikID,  String ime, String prezime, Date datumRodjenja, String ulica,
 			String broj, Mesto mesto, Pol pol) {
 		setUcenikID(ucenikID);
 		setOdeljenje(odeljenje);
@@ -56,7 +54,9 @@ public class Ucenik extends OpstiDomenskiObjekat {
 	}
 
 	public void setIme(String ime) {
-		this.ime = ime;
+		if(ime==null) throw new NullPointerException();
+    	if(ime.length()<3 || ime.equals("")) throw new IllegalArgumentException();
+        this.ime = ime;
 	}
 
 	public String getPrezime() {
@@ -64,7 +64,9 @@ public class Ucenik extends OpstiDomenskiObjekat {
 	}
 
 	public void setPrezime(String prezime) {
-		this.prezime = prezime;
+		if(prezime==null) throw new NullPointerException();
+    	if(prezime.length()<3 || prezime.equals("")) throw new IllegalArgumentException();
+        this.prezime = prezime;
 	}
 
 	public Date getDatumRodjenja() {
@@ -72,7 +74,9 @@ public class Ucenik extends OpstiDomenskiObjekat {
 	}
 
 	public void setDatumRodjenja(Date datumRodjenja) {
-		this.datumRodjenja = datumRodjenja;
+		if(datumRodjenja==null) throw new NullPointerException();
+    	if(datumRodjenja.after(new Date())) throw new IllegalArgumentException();
+    	this.datumRodjenja = datumRodjenja;
 	}
 
 	public String getUlica() {
@@ -80,6 +84,7 @@ public class Ucenik extends OpstiDomenskiObjekat {
 	}
 
 	public void setUlica(String ulica) {
+		if(ulica==null) throw new NullPointerException();
 		this.ulica = ulica;
 	}
 
@@ -88,6 +93,7 @@ public class Ucenik extends OpstiDomenskiObjekat {
 	}
 
 	public void setBroj(String broj) {
+		if(broj==null) throw new NullPointerException();
 		this.broj = broj;
 	}
 
@@ -119,7 +125,11 @@ public class Ucenik extends OpstiDomenskiObjekat {
 
 	@Override
 	public String join() {
-		return "";
+		return " JOIN ODELJENJE O USING (ODELJENJEID) "
+				+ "JOIN SMER SM ON (SM.SMERID = O.SMERID) "
+				+ "JOIN SKOLA SK ON (SK.SKOLAID = O.SKOLAID) "
+				+ "JOIN KORISNIK K ON (K.KORISNIKID = O.KORISNIKID) "
+				+ "JOIN MESTO M ON (M.MESTOID = U.MESTOID)" ;
 	}
 
 	@Override
@@ -127,21 +137,21 @@ public class Ucenik extends OpstiDomenskiObjekat {
 		ArrayList<OpstiDomenskiObjekat> lista = new ArrayList<>();
 
 		while (rs.next()) {
-			Korisnik k = new Korisnik(rs.getLong("KorisnikID"), rs.getString("Ime"),
-					rs.getString("Prezime"), rs.getString("Username"), rs.getString("Password"));
+			Korisnik k = new Korisnik(rs.getLong("KorisnikID"), rs.getString("ImeKorisnika"),
+					rs.getString("PrezimeKorisnika"), rs.getString("Username"), rs.getString("Password"));
 			
-			Smer smer = new Smer(rs.getLong("SmerID"), rs.getString("Naziv"));
+			Smer smer = new Smer(rs.getLong("SmerID"), rs.getString("NazivSmera"));
 			
-			Skola skola = new Skola(rs.getLong("SkolaID"), rs.getString("Naziv"),
+			Skola skola = new Skola(rs.getLong("SkolaID"), rs.getString("NazivSkole"),
 					rs.getString("Adresa"));
 
-			Odeljenje o = new Odeljenje(rs.getLong("OdeljenjeID"), rs.getString("Naziv"), skola, smer, k, null);
+			Odeljenje o = new Odeljenje(rs.getLong("OdeljenjeID"), rs.getString("NazivOdeljenja"), skola, smer, k, null);
 			
 
-			Mesto m = new Mesto(rs.getLong("MestoID"), rs.getString("Naziv"),
+			Mesto m = new Mesto(rs.getLong("MestoID"), rs.getString("NazivMesta"),
 					rs.getString("PostanskiBroj"));
 			
-			Ucenik u = new Ucenik(rs.getLong("UcenikID"), o, rs.getString("Ime"), rs.getString("Prezime"),
+			Ucenik u = new Ucenik( o, rs.getLong("UcenikID"),rs.getString("ImeUcenika"), rs.getString("PrezimeUcenika"),
                        rs.getDate("DatumRodjenja"), rs.getString("Ulica"), rs.getString("Broj"), m, 
                        Pol.valueOf(rs.getString("Pol")));
 
@@ -154,29 +164,29 @@ public class Ucenik extends OpstiDomenskiObjekat {
 
 	@Override
 	public String koloneZaInsert() {
-		return " (OdeljenjeID, UcenikID, Ime, Prezime, Ulica, Broj, MestoID, Pol) ";
+		return " (OdeljenjeID, UcenikID, ImeUcenika, PrezimeUcenika, DatumRodjenja, Ulica, Broj, MestoID, Pol) ";
 	}
 
 	@Override
 	public String vrednostZaPrimarniKljuc() {
-		return " OdeljenjeID = " + odeljenje.getOdeljenjeID();
+		return " OdeljenjeID = " + odeljenje.getOdeljenjeID();  
 	}
 
 	@Override
 	public String vrednostiZaInsert() {
-		return "'" +  ucenikID + "', '" + odeljenje.getOdeljenjeID() + "', '" + ime + "', '" + prezime + "', '" + new java.sql.Date(datumRodjenja.getTime()) 
-				+ "', '" + ulica + "', '" + broj + "', '" + mesto.getMestoID() + "', '" + pol.name() + "'";
+		return "'" +  odeljenje.getOdeljenjeID() + "', '" + ucenikID + "', '" + ime + "', '" + prezime + "', '" + new java.sql.Date(datumRodjenja.getTime()) 
+				+ "', '" + ulica + "', '" + broj + "', '" + mesto.getMestoID() + "', '" + pol.toString() + "'";
 	}
 
 	@Override
 	public String vrednostiZaUpdate() {
-		return " Ime = '" + ime + "', Prezime = '" + prezime  + "', DatumRodjenja = '" + new java.sql.Date(datumRodjenja.getTime()) + "', Ulica = '"
-				+ ulica + "', Broj = '" + broj +  "', MestoID = '" + mesto.getMestoID() +   "', Pol = '" + pol.name() + "' ";
+		return " ImeUcenika = '" + ime + "', PrezimeUcenika = '" + prezime  + "', DatumRodjenja = '" + new java.sql.Date(datumRodjenja.getTime()) + "', Ulica = '"
+				+ ulica + "', Broj = '" + broj +  "', MestoID = '" + mesto.getMestoID() +   "', Pol = '" + pol.toString() + "' ";
 	}
 
 	@Override
 	public String uslov() {
-		return "";
+		return " WHERE U.ODELJENJEID = " + odeljenje.getOdeljenjeID();
 	}
 	
 	@Override

@@ -32,7 +32,8 @@ public class Mesto extends OpstiDomenskiObjekat {
 	}
 
 	public void setNaziv(String naziv) {
-		this.naziv = naziv;
+		if(naziv==null) throw new NullPointerException();
+        this.naziv = naziv;
 	}
 
 	public String getPostanskiBroj() {
@@ -40,7 +41,9 @@ public class Mesto extends OpstiDomenskiObjekat {
 	}
 
 	public void setPostanskiBroj(String postanskiBroj) {
-		this.postanskiBroj = postanskiBroj;
+		if(postanskiBroj==null) throw new NullPointerException();
+    	if(postanskiBroj.length()!=5 || postanskiBroj.equals("")) throw new IllegalArgumentException();
+        this.postanskiBroj = postanskiBroj;
 	}
 
 	@Override
@@ -63,7 +66,7 @@ public class Mesto extends OpstiDomenskiObjekat {
 		ArrayList<OpstiDomenskiObjekat> lista = new ArrayList<>();
 
 		while (rs.next()) {
-			Mesto m = new Mesto(rs.getLong("MestoID"), rs.getString("Naziv"),
+			Mesto m = new Mesto(rs.getLong("MestoID"), rs.getString("NazivMesta"),
 					rs.getString("PostanskiBroj"));
 
 			lista.add(m);
@@ -75,7 +78,7 @@ public class Mesto extends OpstiDomenskiObjekat {
 
 	@Override
 	public String koloneZaInsert() {
-		return " (Naziv, PostanskiBroj) ";
+		return " (NazivMesta, PostanskiBroj) ";
 	}
 
 	@Override
@@ -90,7 +93,7 @@ public class Mesto extends OpstiDomenskiObjekat {
 
 	@Override
 	public String vrednostiZaUpdate() {
-		return " Naziv = '" + naziv + "', PostanskiBroj = '" + postanskiBroj + "' ";
+		return " NazivMesta = '" + naziv + "', PostanskiBroj = '" + postanskiBroj + "' ";
 	}
 
 	@Override

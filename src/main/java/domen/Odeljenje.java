@@ -39,7 +39,8 @@ public class Odeljenje extends OpstiDomenskiObjekat {
 	}
 
 	public void setNaziv(String naziv) {
-		this.naziv = naziv;
+		if(naziv==null) throw new NullPointerException();
+        this.naziv = naziv;
 	}
 
 	public Skola getSkola() {
@@ -87,7 +88,9 @@ public class Odeljenje extends OpstiDomenskiObjekat {
 
 	@Override
 	public String join() {
-		return "";
+		return " JOIN KORISNIK K ON (K.KORISNIKID = O.KORISNIKID) "
+				+ "JOIN SKOLA SK ON (SK.SKOLAID = O.SKOLAID) "
+				+ "JOIN SMER SM ON (SM.SMERID = O.SMERID) ";
 	}
 
 	@Override
@@ -95,15 +98,15 @@ public class Odeljenje extends OpstiDomenskiObjekat {
 		ArrayList<OpstiDomenskiObjekat> lista = new ArrayList<>();
 
 		while (rs.next()) {
-			Korisnik k = new Korisnik(rs.getLong("KorisnikID"), rs.getString("Ime"),
-					rs.getString("Prezime"), rs.getString("Username"), rs.getString("Password"));
+			Korisnik k = new Korisnik(rs.getLong("KorisnikID"), rs.getString("ImeKorisnika"),
+					rs.getString("PrezimeKorisnika"), rs.getString("Username"), rs.getString("Password"));
 			
-			Smer smer = new Smer(rs.getLong("SmerID"), rs.getString("Naziv"));
+			Smer smer = new Smer(rs.getLong("SmerID"), rs.getString("NazivSmera"));
 			
-			Skola skola = new Skola(rs.getLong("SkolaID"), rs.getString("Naziv"),
+			Skola skola = new Skola(rs.getLong("SkolaID"), rs.getString("NazivSkole"),
 					rs.getString("Adresa"));
 
-			Odeljenje o = new Odeljenje(rs.getLong("OdeljenjeID"), rs.getString("Naziv"), skola, smer, k, null);
+			Odeljenje o = new Odeljenje(rs.getLong("OdeljenjeID"), rs.getString("NazivOdeljenja"), skola, smer, k, null);
 
 			lista.add(o);
 		}
@@ -114,7 +117,7 @@ public class Odeljenje extends OpstiDomenskiObjekat {
 
 	@Override
 	public String koloneZaInsert() {
-		return " (Naziv, SkolaID, SmerID , KorisnikID) ";
+		return " (NazivOdeljenja, SkolaID, SmerID , KorisnikID) ";
 	}
 
 	@Override
@@ -124,12 +127,12 @@ public class Odeljenje extends OpstiDomenskiObjekat {
 
 	@Override
 	public String vrednostiZaInsert() {
-		return "'" + naziv + "', '" + skola.getSkolaID() + "', " + "'" + smer.getSmerID() + "', '" + korisnik.getKorisnikID() + "'";
+		return "'" + naziv + "', '" + skola.getSkolaID() + "', '" + smer.getSmerID() + "', '" + korisnik.getKorisnikID() + "'";
 	}
 
 	@Override
 	public String vrednostiZaUpdate() {
-		return " Naziv = '" + naziv + "', SkolaID = '" + skola.getSkolaID() + "', " + "SmerID = '" + smer.getSmerID() + "', KorisnikID = '"
+		return " NazivOdeljenja = '" + naziv + "', SkolaID = '" + skola.getSkolaID() + "', " + "SmerID = '" + smer.getSmerID() + "', KorisnikID = '"
 				+ korisnik.getKorisnikID() + "' ";
 	}
 

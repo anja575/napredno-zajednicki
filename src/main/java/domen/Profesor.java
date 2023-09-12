@@ -4,7 +4,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-
 public class Profesor extends OpstiDomenskiObjekat{
 	
 	private long profesorID;
@@ -37,7 +36,9 @@ public class Profesor extends OpstiDomenskiObjekat{
 	}
 
 	public void setIme(String ime) {
-		this.ime = ime;
+		if(ime==null) throw new NullPointerException();
+    	if(ime.length()<3 || ime.equals("")) throw new IllegalArgumentException();
+        this.ime = ime;
 	}
 
 	public String getPrezime() {
@@ -45,7 +46,9 @@ public class Profesor extends OpstiDomenskiObjekat{
 	}
 
 	public void setPrezime(String prezime) {
-		this.prezime = prezime;
+		if(prezime==null) throw new NullPointerException();
+    	if(prezime.length()<3 || prezime.equals("")) throw new IllegalArgumentException();
+        this.prezime = prezime;
 	}
 
 	public String getEmail() {
@@ -53,7 +56,9 @@ public class Profesor extends OpstiDomenskiObjekat{
 	}
 
 	public void setEmail(String email) {
-		this.email = email;
+		if(email==null) throw new NullPointerException();
+    	if(!email.contains("@")) throw new IllegalArgumentException();
+    	this.email = email;
 	}
 
 	public Skola getSkola() {
@@ -71,23 +76,23 @@ public class Profesor extends OpstiDomenskiObjekat{
 
 	@Override
 	public String alijas() {
-		return " p ";
+		return " P ";
 	}
 
 	@Override
 	public String join() {
-		return "";
+		 return " JOIN SKOLA S ON (P.SKOLAID = S.SKOLAID)";
 	}
 
 	@Override
 	public ArrayList<OpstiDomenskiObjekat> vratiListu(ResultSet rs) throws SQLException {
 		ArrayList<OpstiDomenskiObjekat> lista = new ArrayList<>();
 		while (rs.next()) {
-		Skola s = new Skola(rs.getLong("SkolaID"), rs.getString("Naziv"),
+		Skola s = new Skola(rs.getLong("SkolaID"), rs.getString("NazivSkole"),
 				rs.getString("Adresa"));
 
-		Profesor p = new Profesor(rs.getLong("ProfesorID"), rs.getString("Ime"),
-				rs.getString("Prezime"), rs.getString("Email"), s);
+		Profesor p = new Profesor(rs.getLong("ProfesorID"), rs.getString("ImeProfesora"),
+				rs.getString("PrezimeProfesora"), rs.getString("Email"), s);
 
 		lista.add(p);
 		}
@@ -97,7 +102,7 @@ public class Profesor extends OpstiDomenskiObjekat{
 
 	@Override
 	public String koloneZaInsert() {
-		return " (Ime, Prezime, Email , SkolaID) ";
+		return " (ImeProfesora, PrezimeProfesora, Email , SkolaID) ";
 	}
 
 	@Override
@@ -107,12 +112,12 @@ public class Profesor extends OpstiDomenskiObjekat{
 
 	@Override
 	public String vrednostiZaInsert() {
-		return "'" + ime + "', '" + prezime + "', " + "'" + email + "', '" + skola.getSkolaID() + "'";
+		return "'" + ime + "', '" + prezime + "', '" + email + "', '" + skola.getSkolaID() + "'";
 	}
 
 	@Override
 	public String vrednostiZaUpdate() {
-		return " Ime = '" + ime + "', Prezime = '" + prezime + "', " + "Email = '" + email + "', SkolaID = '"
+		return " ImeProfesora = '" + ime + "', PrezimeProfesora = '" + prezime + "', " + "Email = '" + email + "', SkolaID = '"
 				+ skola.getSkolaID() + "' ";
 	}
 
@@ -125,6 +130,9 @@ public class Profesor extends OpstiDomenskiObjekat{
 	public String toString() {
 		return ime + " " + prezime;
 	}
+
+
+	
 	
 
 }

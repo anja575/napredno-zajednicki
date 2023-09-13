@@ -3,7 +3,7 @@ package domen;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-
+import com.google.gson.annotations.SerializedName;
 /**
  * 
  * Odnosi se na skolu u kojoj zaposleni rade i kojoj odeljenja pripadaju.
@@ -19,14 +19,16 @@ public class Skola extends OpstiDomenskiObjekat {
 	/**
 	 * ID skole kao Long.
 	 */
-	private long skolaID;
+	private transient long skolaID;
 	/**
 	 * Naziv skole kao String.
 	 */
+	@SerializedName("Naziv skole")
 	private String naziv;
 	/**
 	 * Adresa skole kao String.
 	 */
+	@SerializedName("Adresa skole")
 	private String adresa;
 	/**
 	 * Neparametrizovani konstruktor koji inicijalizuje novu skolu.
